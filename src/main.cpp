@@ -7,7 +7,7 @@ int main(int argc, char* argv[])
 {
     
     std::string line;
-    Lexer lexer("../../src.pns");
+    Lexer lexer("src.pns");
     lexer.scanFile();
     
     
