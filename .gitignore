@@ -38,3 +38,8 @@ bin/*
 *.vcxproj
 *.user
 *.filters
+*.xcworkspacedata
+*.plist
+*.xcsettings
+*.xcuserstate
+*.pbxproj

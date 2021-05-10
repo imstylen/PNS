@@ -5,11 +5,12 @@ workspace "PoopWorkspace"
 project "PoopProject"
    kind "ConsoleApp"
    language "C++"
+   cppdialect "C++17"
    targetdir "bin/%{cfg.buildcfg}"
    objdir "bin/obj/%{cfg.buildcfg}"
    files { "src/**.h", "src/**.cpp" }
 
-   includedirs {"vendor/spdlog/include"}
+   sysincludedirs {"vendor/spdlog/include"}
    includedirs {"src"}
 
 
