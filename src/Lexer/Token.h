@@ -4,7 +4,7 @@
 //
 //  Created by Michael Steijlen on 5/9/21.
 //
-
+#pragma once
 #include <string>
 
 
@@ -14,30 +14,35 @@ public:
     enum ETag
     {
         AND,BASIC, BREAK, DO, ELSE,
-        EQ,FALSE,GE,ID,IF,
+        EQ,FALZO,GE,ID,IF,
         INDEX,LE,MINUS,NE,NUM,
-        OR,REAL,TEMP,TRUE,WHILE
+        OR,REAL,TEMP,TRUSKI,WHILE
         
     };
     int tag;
     Token(int t) {tag = t;};
+
+    virtual std::string getString();
 };
 
-class Num : Token
+class Num : public Token
 {
+public:
     int value;
     Num(int v) : Token(ETag::NUM) { this->value = v; };
     
 };
 
-class Real : Token
+class Real : public Token
 {
+public:
+
     float value;
     Real(float v) : Token(ETag::REAL) { this->value = v; };
     
 };
 
-class Word : Token
+class Word : public Token
 {
 public:
     std::string lexeme;
@@ -58,15 +63,4 @@ public:
     
 };
 
-//Initialize static variables.
-Word Word::andd = Word("&&",ETag::AND);
-Word Word::orr = Word("||",ETag::OR);
-Word Word::eq = Word("==",ETag::EQ);
-Word Word::ne = Word("!=",ETag::NE);
-Word Word::le = Word("<=",ETag::LE);
-Word Word::ge = Word(">=",ETag::GE);
-Word Word::minus = Word("minus",ETag::MINUS);
-Word Word::True = Word("true",ETag::TRUE);
-Word Word::False = Word("false",ETag::FALSE);
-Word Word::temp = Word("t",ETag::TEMP);
 
