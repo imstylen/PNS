@@ -31,7 +31,10 @@ public:
     void readch();
     bool readch(char c);
 
-    std::vector<Token> tokens;
+    //TODO this slices word objects dumb dubm.
+    //Allocate on heap instead using new keyword.
+    //This variable will becom an array of Token pointers.
+    std::vector<Token*> tokens;
 
     Token* scan();
 

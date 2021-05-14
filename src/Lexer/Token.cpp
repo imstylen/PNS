@@ -4,8 +4,6 @@
 //
 //  Created by Michael Steijlen on 5/9/21.
 //
-#pragma once
-
 #include "Token.h"
 
 //Initialize static variables.

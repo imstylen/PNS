@@ -29,6 +29,7 @@ Lexer::Lexer(std::string filePath)
 void Lexer::readch()
 {
     this->peek = inputFileStream.get();
+
 }
 
 bool Lexer::readch(char c)
@@ -67,84 +68,89 @@ Token* Lexer::scan()
         }
     }
 
+    PNS_LOG(std::string("peek: ")+= peek);
+    
     switch (peek)
     {
+    case '\377':
+            return nullptr;
+            break;
     case '&':
         if (readch('&'))
         {
-            tokens.push_back(Word::andd);
-            return &tokens.back();
+            tokens.push_back(&Word::andd);
+            return tokens.back();
             break;
         }
         else
         {
-            tokens.push_back(Token('&'));
-            return &tokens.back();
+            tokens.push_back(new Token('&'));
+            return tokens.back();
             break;
         }
 	case '|':
 		if (readch('|'))
 		{
-			tokens.push_back(Word::orr);
-			return &tokens.back();
+			tokens.push_back(&Word::orr);
+			return tokens.back();
 			break;
 		}
 		else
 		{
-			tokens.push_back(Token('|'));
-			return &tokens.back();
+			tokens.push_back(new Token('|'));
+			return tokens.back();
 			break;
 		}
 	case '=':
 		if (readch('='))
 		{
-			tokens.push_back(Word::eq);
-			return &tokens.back();
+			tokens.push_back(&Word::eq);
+			return tokens.back();
 			break;
 		}
 		else
 		{
-			tokens.push_back(Token('='));
-			return &tokens.back();
+			tokens.push_back(new Token('='));
+			return tokens.back();
 			break;
 		}
 	case '!':
 		if (readch('='))
 		{
-			tokens.push_back(Word::ne);
-			return &tokens.back();
+			tokens.push_back(&Word::ne);
+			return tokens.back();
 			break;
 		}
 		else
 		{
-			tokens.push_back(Token('!'));
-			return &tokens.back();
+			tokens.push_back(new Token('!'));
+			return tokens.back();
 			break;
 		}
 	case '<':
 		if (readch('='))
 		{
-			tokens.push_back(Word::le);
-			return &tokens.back();
+			tokens.push_back(&Word::le);
+			return tokens.back();
 			break;
 		}
 		else
 		{
-			tokens.push_back(Token('<'));
-			return &tokens.back();
+			tokens.push_back(new Token('<'));
+			return tokens.back();
 			break;
 		}
 	case '>':
 		if (readch('='))
 		{
-			tokens.push_back(Word::ge);
-			return &tokens.back();
+			tokens.push_back(&Word::ge);
+			return tokens.back();
 			break;
 		}
 		else
 		{
-			tokens.push_back(Token('>'));
-			return &tokens.back();
+			tokens.push_back(new Token('>'));
+			return tokens.back();
 			break;
 		}
     }
@@ -161,8 +167,8 @@ Token* Lexer::scan()
 		}
 		if (peek != '.')
 		{
-			tokens.push_back(Num(v));
-			return &tokens.back();
+			tokens.push_back(new Num(v));
+			return tokens.back();
 		}
 
 		//Number is a float.
@@ -185,7 +191,7 @@ Token* Lexer::scan()
 				d = d * 10;
 			}
 
-			tokens.push_back(Real(x));
+			tokens.push_back(new Real(x));
 		}
 	}
 
@@ -200,23 +206,32 @@ Token* Lexer::scan()
 		}
 
 		//Check our reserved words for the word we just found.
-		Word* foundWord = &reservedWords.at(stringBuffer);
-		if (foundWord != nullptr)
+        Word* foundWord;
+        try{
+            foundWord = &reservedWords.at(stringBuffer);
+        }
+        catch (std::out_of_range)
+        {
+            foundWord = nullptr;
+        }
+        
+        if (foundWord != nullptr)
 		{
-			tokens.push_back(*foundWord);
-			return &tokens.back();
+			tokens.push_back(foundWord);
+			return tokens.back();
 		}
 		else
 		{
 			//New word.
-			tokens.push_back(Word(stringBuffer, Token::ETag::ID));
-			return &tokens.back();
+			tokens.push_back(new Word(stringBuffer, Token::ETag::ID));
+            
+			return tokens.back();
 		}
 
 	}
 
-	tokens.push_back(Token(peek));
-	return &tokens.back();
+	tokens.push_back(new Token(peek));
+	return tokens.back();
 
 }
 
@@ -227,6 +242,18 @@ void Lexer::scanFile()
 	while (true)
 	{
 		newToken = scan();
+
+        Word* newWord = (Word*) newToken;
+        if (newWord != nullptr)
+        {
+            PNS_LOG(newWord->lexeme);
+        }
+        
+        if(newToken == nullptr)
+        {
+            break;
+        }
+
 	}
 
 }
@@ -234,5 +261,10 @@ void Lexer::scanFile()
 Lexer::~Lexer()
 {
     PNS_LOG("Lexer has been deleted");
+    for(Token* t : tokens)
+    {
+        PNS_LOG("Deleting :" + t->getString());
+        delete t;
+    }
     inputFileStream.close();
 }
