@@ -67,8 +67,6 @@ Token* Lexer::scan()
             break;
         }
     }
-
-    PNS_LOG(std::string("peek: ")+= peek);
     
     switch (peek)
     {
@@ -162,7 +160,7 @@ Token* Lexer::scan()
 		int v = 0;
 		while (isdigit(peek))
 		{
-			v = 10 * v + (int)peek;
+			v = 10 * v + (int)peek-48;
 			readch();
 		}
 		if (peek != '.')
@@ -187,12 +185,13 @@ Token* Lexer::scan()
 			}
 			else
 			{
-				x = x + (float)peek / d;
+                int n = (int) peek - 48;
+				x = x + ((float) n) / d;
 				d = d * 10;
 			}
-
-			tokens.push_back(new Real(x));
 		}
+        tokens.push_back(new Real(x));
+        return tokens.back();
 	}
 
 	if (isalpha(peek))
@@ -242,16 +241,14 @@ void Lexer::scanFile()
 	while (true)
 	{
 		newToken = scan();
-
-        Word* newWord = (Word*) newToken;
-        if (newWord != nullptr)
-        {
-            PNS_LOG(newWord->lexeme);
-        }
         
         if(newToken == nullptr)
         {
             break;
+        }
+        else
+        {
+            PNS_LOG(newToken->getString());
         }
 
 	}
@@ -263,8 +260,8 @@ Lexer::~Lexer()
     PNS_LOG("Lexer has been deleted");
     for(Token* t : tokens)
     {
-        PNS_LOG("Deleting :" + t->getString());
-        delete t;
+        //PNS_LOG("Deleting" + t->getString());
+        //delete t;
     }
     inputFileStream.close();
 }

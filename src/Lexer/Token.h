@@ -4,9 +4,8 @@
 //
 //  Created by Michael Steijlen on 5/9/21.
 //
-#pragma once
 #include <string>
-
+#include <vector>
 
 class Token
 {
@@ -19,6 +18,9 @@ public:
         OR,REAL,TEMP,TRUSKI,WHILE
         
     };
+    
+    static std::vector<std::string> tagStrings;
+    
     int tag;
     Token(int t) {tag = t;};
 
@@ -30,6 +32,7 @@ class Num : public Token
 public:
     int value;
     Num(int v) : Token(ETag::NUM) { this->value = v; };
+    std::string getString() override;
     
 };
 
@@ -39,7 +42,7 @@ public:
 
     float value;
     Real(float v) : Token(ETag::REAL) { this->value = v; };
-    
+    std::string getString() override;
 };
 
 class Word : public Token
@@ -47,7 +50,7 @@ class Word : public Token
 public:
     std::string lexeme;
     Word(std::string s, int tag ) : Token(tag) { this->lexeme = s; };
-    
+    std::string getString() override;
     
     static Word andd;
     static Word orr;
